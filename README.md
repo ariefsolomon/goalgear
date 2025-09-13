@@ -46,6 +46,7 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 ## Alur Request-Respones Django GoalGear
 
+<<<<<<< HEAD
 [ Client Request ]
 |
 v
@@ -73,6 +74,11 @@ v
 |
 v
 [ Django Response ]
+=======
+<img width="1188" height="787" alt="image" src="https://github.com/user-attachments/assets/c8409280-f90f-42fb-8bba-16a437b4b4c5" />
+
+**Referensi:** Tim Dosen PBP. (2024). MTV Django Architecture. Universitas Indonesia.
+>>>>>>> 9cce799010caed381cff564c791ce9c181f742c4
 
 ### Penjelasan lebihlanjut:
 
