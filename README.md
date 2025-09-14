@@ -22,23 +22,27 @@ Berdasarkan alur tersebut, _data delivery_ diperlukan untuk membuat aplikasi kit
 
 ## JSON atau XML yang lebih baik?
 
-Menurut saya *JSON lebih baik* dan *lebih banyak digunakan* karena:
+Menurut saya JSON lebih baik dan lebih banyak digunakan karena:
 -   Ukuran file lebih kecil, sehingga dapat menghemat bandwidth.
 -   Struktur kode yang lebih mudah, menggunakan _maplike_ _key-value pairs_, dibanding dengan _markup language_ XML dengan struktur berbasis HTML dengan syntax yang _verbose_ yang dapat memberatkan bandwidth.
 -   Lebih aman terhadap jenis serangan seperti yang terjadi di XML (XXE: XML External Entity dan Billion Laughs).
 
 Namun demikian, jika diperlukan data dengan aturan schema yang kuat, maka XML akan lebih kompatibel digunakan, seperti pada lingkungan enterprise, dengan resiko keamanan spesifik yang juga harus di-_manage_.
 
+Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/ 
+
 ## Fungsi Method `is_valid()` di `views.py`
 
 `is_valid()` digunakan untuk menerima dan melakukan validasi input user, biasanya dalam data form. Misalnya, `is_valid()` yang berada di dalam method `create_product` di `views.py` dengan penjelasan:
 1. Variable `form` menangkap `ProductForm(request.POST or None)` -> form diisi dengan input dari user.
 2. `if form.is_valid()` mengecek apakah input sesuai dengan fields yang didefinisikan di `ProductForm` di `forms.py` (berdasarkan `Product` di `models.py`) serta `request.method == "POST"` memastikan memang ada pengiriman form (bukan hanya akses page). 
-3. Jika hasil `True` -> `form.save` dan `return redirect("main:show_main")` untuk kembali ke halaman utama. Jika hasil `False` -> kalau pertama kali akses page (GET) -> form kosong ditampilkan; kalau submit tapi ada error (_invalid input_) -> menampilkan _error message_ dari `form`.
+3. Jika hasil `True` -> `form.save` dan `return redirect("main:show_main")` untuk kembali ke page utama. Jika hasil `False` -> kalau pertama kali akses page (GET) -> form kosong ditampilkan; kalau submit tapi ada error (_invalid input_) -> menampilkan _error message_ dari `form`.
 
 ## Kenapa perlu `csrf_token` saat membuat form di Django?
 
-
+`{% csrf_token %}`, misalnya yang ada di dalam `create_product.html`, mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana penyerang membuat browser korban mengirim request ke situs yang korban sudah login. `csrf_token` adalah token unik yang harus disisipkan di setiap form HTML yang butuh aksi: POST/PUT/DELETE. 
+Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
+Karena penyerang tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
 
 # Tugas 2 | MVT Implementation
 
