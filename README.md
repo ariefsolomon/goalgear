@@ -40,9 +40,10 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 
 ## Kenapa perlu `csrf_token` saat membuat form di Django?
 
-`{% csrf_token %}`, misalnya yang ada di dalam `create_product.html`, mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana penyerang membuat browser korban mengirim request ke situs yang korban sudah login. `csrf_token` adalah token unik yang harus disisipkan di setiap form HTML yang butuh aksi: POST/PUT/DELETE. 
-Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
-Karena penyerang tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
+-   `{% csrf_token %}`, misalnya yang ada di dalam `create_product.html`, mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana penyerang membuat browser korban mengirim request ke situs yang korban sudah login
+-   `csrf_token` adalah token unik yang harus disisipkan di setiap form HTML yang butuh aksi: POST/PUT/DELETE. 
+-   Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
+-   Karena penyerang tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
 
 # Tugas 2 | MVT Implementation
 
