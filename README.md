@@ -6,6 +6,42 @@
 
 goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
+# Tugas 3 | Data Delivery
+
+## Mengapa perlu _data delivery_ dalam sebuah platform?
+
+*Data delivery* adalah proses mengirimkan data dari server ke client agar data dapat ditampilkan, digunakan, atau diolah lebih lanjut. Data yang dikirimkan ke client berbentuk HTML, JSON, XML, dll.
+
+Django sendiri melakukan _data delivery_ dengan alur mekanisme *request -> view -> response*:
+1. User kirim request, misalnya `url/product/<id product>/` atau menekan tombol `See Detail` pada salah satu product di page `main.html`.
+2. `urls.py` mengarahkan ke fungsi `show_product` yang berada di `views.py`.
+3. `show_product` menerima `request` dan `id` product untuk mengangkap objek product dengan variable `product` menggunakan `get_object_or_404(Product, pk=id)` dari `models.py` dan database.
+4. `show_product` mengembalikan data di dalam variable `context` dan merendernya dengan `product_detail.html`, lalu menampilkannya ke user.
+
+Berdasarkan alur tersebut, _data delivery_ diperlukan untuk membuat aplikasi kita menjadi lebih dinamis, serta dapat menampilkan data yang sesuai dengan _request_ dari user.
+
+## JSON atau XML yang lebih baik?
+
+Menurut saya *JSON lebih baik* dan *lebih banyak digunakan* karena:
+-   Ukuran file lebih kecil, sehingga dapat menghemat bandwidth.
+-   Struktur kode yang lebih mudah, menggunakan _maplike_ _key-value pairs_, dibanding dengan _markup language_ XML dengan struktur berbasis HTML dengan syntax yang _verbose_ yang dapat memberatkan bandwidth.
+-   Lebih aman terhadap jenis serangan seperti yang terjadi di XML (XXE: XML External Entity dan Billion Laughs).
+
+Namun demikian, jika diperlukan data dengan aturan schema yang kuat, maka XML akan lebih kompatibel digunakan, seperti pada lingkungan enterprise, dengan resiko keamanan spesifik yang juga harus di-_manage_.
+
+## Fungsi Method `is_valid()` di `views.py`
+
+`is_valid()` digunakan untuk menerima dan melakukan validasi input user, biasanya dalam data form. Misalnya, `is_valid()` yang berada di dalam method `create_product` di `views.py` dengan penjelasan:
+1. Variable `form` menangkap `ProductForm(request.POST or None)` -> form diisi dengan input dari user.
+2. `if form.is_valid()` mengecek apakah input sesuai dengan fields yang didefinisikan di `ProductForm` di `forms.py` (berdasarkan `Product` di `models.py`) serta `request.method == "POST"` memastikan memang ada pengiriman form (bukan hanya akses page). 
+3. Jika hasil `True` -> `form.save` dan `return redirect("main:show_main")` untuk kembali ke halaman utama. Jika hasil `False` -> kalau pertama kali akses page (GET) -> form kosong ditampilkan; kalau submit tapi ada error (_invalid input_) -> menampilkan _error message_ dari `form`.
+
+## Kenapa perlu `csrf_token` saat membuat form di Django?
+
+
+
+# Tugas 2 | MVT Implementation
+
 ## Penjelasan Implementasi MVT
 
 1. **Membuat Proyek Django Baru:**
@@ -46,39 +82,9 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 ## Alur Request-Respones Django GoalGear
 
-<<<<<<< HEAD
-[ Client Request ]
-|
-v
-[ Django Development Server ]
-|
-v
-[ goalgear/urls.py ]
-|
-v
-[ main/urls.py ]
-|
-v
-[ main/views.py ]
-|     |
-|     v
-|     [ main/models.py ]
-|     |
-|     (ambil/olah data)
-|     |
-v     |
-[ Context (data) ]
-|
-v
-[ main/templates/main.html ]
-|
-v
-[ Django Response ]
-=======
 <img width="1188" height="787" alt="image" src="https://github.com/user-attachments/assets/c8409280-f90f-42fb-8bba-16a437b4b4c5" />
 
 **Referensi:** Tim Dosen PBP. (2024). MTV Django Architecture. Universitas Indonesia.
->>>>>>> 9cce799010caed381cff564c791ce9c181f742c4
 
 ### Penjelasan lebihlanjut:
 
