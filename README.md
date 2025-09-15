@@ -45,6 +45,15 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 -   Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
 -   Karena penyerang tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
 
+## Penjelasan Implementasi Tugas 3
+
+1. *Pembuatan 4 Fungsi `views.py`*: Mebuat fungsi `show_xml`, `show_json`, `show_xml_by_id`, `show_json_by_id` untuk mengakses dan menampilkan data dalam format `JSON` dan `XML` di browser berdasarkan `Tutorial 2` yang diberikan.
+2. *Membuat Routing 4 Fungsi Show*: Membuat routing url untuk masing-masing fungsi show di dalam `views.py` sebelumnya di dalam `main/urls.py` agar user dapat melakukan request dan mengakses masing-masing page data sesuai dengan `Tutorial 2` yang diberikan.
+
+## Feedback Asdos
+
+-
+
 # Tugas 2 | MVT Implementation
 
 ## Penjelasan Implementasi MVT
