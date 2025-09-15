@@ -52,7 +52,12 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 
 ## Feedback Asdos
 
--
+Tidak ada.
+
+## Dokumentasi Postman
+
+- ![alt text](<Screenshot 2025-09-15 130736.png>)
+- ![alt text](<Screenshot 2025-09-15 130753.png>)
 
 # Tugas 2 | MVT Implementation
 
