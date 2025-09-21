@@ -21,4 +21,8 @@
 
 <p>{{ product.description }}</p>
 
+{% if product.user %}
+	<p>{{ product.user.username }}</p>
+{ endif }
+
 {% endblock content %}
