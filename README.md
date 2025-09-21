@@ -11,9 +11,11 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 ## Apa itu Django AuthenticationForm?
 
 `AuthenticationForm` pada Django adalah form bawaan dari `django.contrib.auth.forms` yang memudahkan dalam men-develop proses login aplikasi web. 
+
 **Kelebihan**: 
 - Terintegrasi dengan method `authenticate()` dan `login()`.
 - 'get_user()' untuk pengecekan username atau password sehingga tidak perlu membuat validasi lagi.
+
 **Kekurangan**:
 - Hanya melakukan validasi kredensial dasar, untuk aturan password, dsb. harus ditambahkan sendiri.
 - Kurang fleksibel jika ingin menambahkan field input tambahan.
@@ -22,20 +24,42 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 **Authentication**: Melakukan verifikasi pengguna, biasanya dengan login (meminta username dan password).
 1. Fungsi `login_user` di dalam `views.py` menangani proses login ketika user mengakses halaman login.
+    ```python
+    def login_user(request):
+    if request.method == 'POST':
+        ...
+    else:
+        form = AuthenticationForm(request)
+    return render(request, 'login.html', {'form': form})
 2. Decorator `@login_required(login_url='/login')` biasanya dipasang di view selain `login_user` (misalnya `show_main`) untuk memastikan hanya user yang sudah login yang bisa mengakses page tersebut. Jika belum login, user akan diarahkan ke halaman login.
+    ```python
+    @login_required(login_url='/login')
+    def show_main(request):
+        ...
+        return render(request, 'main.html', context)
 3. User mengisi *username* dan *password* yang diproses oleh `AuthenticationForm` dalam objek `form`.
+    ```python
+    form = AuthenticationForm(data=request.POST)
 4. `form.is_valid()` akan memanggil `authenticate()` untuk memverifikasi objek `User` di database (melalui model `User` bawaan Django atau custom user model).
    - Jika user valid, objek `User` disimpan di `user_cache`, dan bisa diambil lewat `form.get_user()`.
    - Jika tidak valid, `form.get_user()` mengembalikan `None`.
+    ```python
+    if form.is_valid():
+        user = form.get_user()
 5. `login(request, user)` kemudian menyimpan informasi user ke dalam session (dengan menyimpan `user.id`), dan mengirim cookie `sessionid` ke browser.  
    Dengan cara ini, Django bisa mengenali user yang sedang login pada request berikutnya.
+    ```python
+    login(request, user)
+    response = HttpResponseRedirect(reverse("main:show_main"))
+    response.set_cookie('last_login', str(datetime.datetime.now()))
+    return response
 
 **Authorization**: Mengizinkan user dengan identitas tertentu (username dan password, atau atribut lainnya) untuk mengakses page atau fungsi tertentu di dalam aplikasi web. 
 1. Setelah user login melalui `login_user`, Django menyimpan informasi user ke dalam session (`sessionid`).
 2. Middleware `AuthenticationMiddleware` otomatis menambahkan atribut `request.user` ke setiap request.
    - Jika user sudah login -> `request.user` berisi objek `User`.
    - Jika belum login -> `request.user` adalah `AnonymousUser`.
-3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login:
+3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login.
    ```python
    @login_required(login_url='/login')
    def show_main(request):
