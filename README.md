@@ -97,8 +97,8 @@ Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-
 
 ## Keamanan Cookies dalam Django
     
-    ```python
-    def login_user(request):
+```python
+def login_user(request):
     if request.method == 'POST':
         ...
         if form.is_valid():
@@ -108,17 +108,18 @@ Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-
             return response
     else:
         ...
+```
 
 Pada bagian `response.set_cookies('last_login', ...)`, berfungsi untuk mendaftarkan cookie `last_login` di `response`. 
 
-    ```python
-    def show_main(request):
+```python
+def show_main(request):
     ...
     context = {
         ...
         'last_login': request.COOKIES.get('last_login', 'Never'),
     }
-    ```
+```
 
 Sementara di dalam `show_main`, `.get()` mengambil cookie `last_login`, jika tidak ditemukan -> akan mengembalikan nilai default `Never`.
 
@@ -266,3 +267,4 @@ Mengatur konfigurasi proyek keseluruhan seperti aplikasi terinstall, database, m
 ## Feedback untuk Asisten Dosen
 
 Tutorial yang diberikan sudah sangat baik, namun bisa dijelaskan lebih lanjut di kelas, karena awalnya saya sedikit bingung dan menghabiskan waktu di pre-tutorial dikarenakan saya menganggap hal tersebut wajib dikerjakan sebelum tutorial.
+
