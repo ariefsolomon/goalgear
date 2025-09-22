@@ -31,7 +31,6 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     else:
         form = AuthenticationForm(request)
     return render(request, 'login.html', {'form': form})
-    ```
 
 2. Decorator `@login_required(login_url='/login')` biasanya dipasang di view selain `login_user` (seperti `show_main` dan `show_product`) untuk memastikan hanya user yang sudah login yang bisa mengakses page tersebut. Jika belum login, user akan diarahkan ke halaman login.
     ```python
@@ -39,12 +38,10 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     def show_main(request):
         ...
         return render(request, 'main.html', context)
-    ```
 
 3. User mengisi *username* dan *password* yang diproses oleh `AuthenticationForm` dalam objek `form`.
     ```python
     form = AuthenticationForm(data=request.POST)
-    ```
 
 4. `form.is_valid()` akan memanggil `authenticate()` untuk memverifikasi objek `User` di database (melalui model `User` bawaan Django atau custom user model).
    - Jika user valid, objek `User` disimpan di `user_cache`, dan bisa diambil lewat `form.get_user()`.
@@ -52,7 +49,6 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     ```python
     if form.is_valid():
         user = form.get_user()
-    ```
 
 5. `login(request, user)` kemudian menyimpan informasi user ke dalam session (dengan menyimpan `user.id`), dan mengirim cookie `sessionid` ke browser.  
    Dengan cara ini, Django bisa mengenali user yang sedang login pada request berikutnya.
@@ -61,7 +57,6 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     response = HttpResponseRedirect(reverse("main:show_main"))
     response.set_cookie('last_login', str(datetime.datetime.now()))
     return response
-    ```
 
 **Authorization**: Mengizinkan user dengan identitas tertentu (username dan password, atau atribut lainnya) untuk mengakses page atau fungsi tertentu di dalam aplikasi web. 
 1. Setelah user login melalui `login_user`, Django menyimpan informasi user ke dalam session (`sessionid`).
@@ -70,9 +65,9 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
    - Jika belum login -> `request.user` adalah `AnonymousUser`.
 3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login, seperti pada pembahasan pada _Authentication_ poin ke-2.
 
-## Session dan Cookies
+## Sessions dan Cookies
 
-**Cookies**: Data (ukurannya cenderung kecil) yang tersimpan di browser user untuk mengingat hal-hal seperti status logged atau preferensi user di dalam suatu web app.
+**Cookies**: Data (ukurannya cenderung kecil) yang tersimpan di browser user untuk mengingat hal-hal seperti status logged atau preferensi user di dalam suatu web app di server.
 
 - Kelebihan: 
     - Kecepatan load data di browser client lebih cepat.
@@ -85,7 +80,7 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 - Contoh: Google, Facebook, Amazon, YouTube, Netflix, dsb.
 
-**Session**: Sama seperti cookies, tetapi data di simpan di dalam server.
+**Sessions**: Sama seperti cookies, tetapi data di simpan di dalam server.
 
 - Kelebihan:
     - Keamanan data yang tersimpan lebih terjamin.
@@ -102,7 +97,7 @@ Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-
 
 ## Keamanan Cookies dalam Django
     
-    ```views.py
+    ```python
     def login_user(request):
     if request.method == 'POST':
         ...
@@ -113,23 +108,30 @@ Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-
             return response
     else:
         ...
-    ```
 
 Pada bagian `response.set_cookies('last_login', ...)`, berfungsi untuk mendaftarkan cookie `last_login` di `response`. 
 
-    ```show_main()
+    ```python
     def show_main(request):
     ...
     context = {
         ...
         'last_login': request.COOKIES.get('last_login', 'Never'),
     }
-    ... 
     ```
 
 Sementara di dalam `show_main`, `.get()` mengambil cookie `last_login`, jika tidak ditemukan -> akan mengembalikan nilai default `Never`.
 
+Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
 
+Permasalahan security mengenai cookie di Django adalah sebagai berikut: 
+
+**Cross Site Scripting (XSS)**: Jika sesi cookie dikirim melalui HTTP yang tidak aman, _attacker_ dapat mencegatnya dan memperoleh akses tidak sah ke sesi pengguna.
+- Solusi: Tetapkan `SESSION_COOKIE_HTTPONLY = True`, `SESSION_COOKIE_SECURE = True` di `settings.py` yang memastikan sesi cookie hanya dikirim melalui HTTPS yang lebih aman.
+
+**HTTP Problem**
+_Attacker_ dapat melacak sesi cookie melalui jaringan publik seperti WIFI.
+- Solusi: Tetapkan `SESSION_COOKIE_SECURE = True` dengan alasan sama seerti poin sebelumnya.
 
 # Tugas 3 | Data Delivery
 
@@ -165,10 +167,10 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 
 ## Kenapa perlu `csrf_token` saat membuat form di Django?
 
--   `{% csrf_token %}`, misalnya yang ada di dalam `create_product.html`, mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana penyerang membuat browser korban mengirim request ke situs yang korban sudah login
+-   `{% csrf_token %}`, misalnya yang ada di dalam `create_product.html`, mencegah CSRF (Cross-Site Request Forgery), yaitu serangan di mana _attacker_ membuat browser korban mengirim request ke situs yang korban sudah login
 -   `csrf_token` adalah token unik yang harus disisipkan di setiap form HTML yang butuh aksi: POST/PUT/DELETE. 
 -   Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
--   Karena penyerang tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
+-   Karena _attacker_ tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
 
 ## Penjelasan Implementasi Tugas 3
 
