@@ -1,8 +1,8 @@
 # GoalGear
 
-## Muhammad Arief Solomon - 2406343092
+**Muhammad Arief Solomon - 2406343092 - PBP E**
 
-## Link Aplikasi Web
+**Link Aplikasi Web**:
 
 goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
@@ -31,7 +31,7 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     else:
         form = AuthenticationForm(request)
     return render(request, 'login.html', {'form': form})
-2. Decorator `@login_required(login_url='/login')` biasanya dipasang di view selain `login_user` (misalnya `show_main`) untuk memastikan hanya user yang sudah login yang bisa mengakses page tersebut. Jika belum login, user akan diarahkan ke halaman login.
+2. Decorator `@login_required(login_url='/login')` biasanya dipasang di view selain `login_user` (seperti `show_main` dan `show_product`) untuk memastikan hanya user yang sudah login yang bisa mengakses page tersebut. Jika belum login, user akan diarahkan ke halaman login.
     ```python
     @login_required(login_url='/login')
     def show_main(request):
@@ -59,10 +59,55 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 2. Middleware `AuthenticationMiddleware` otomatis menambahkan atribut `request.user` ke setiap request.
    - Jika user sudah login -> `request.user` berisi objek `User`.
    - Jika belum login -> `request.user` adalah `AnonymousUser`.
-3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login.
-   ```python
-   @login_required(login_url='/login')
-   def show_main(request):
+3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login, seperti pada pembahasan pada _Authentication_ poin ke-2.
+
+## Session dan Cookies
+
+**Cookies**: Data (ukurannya cenderung kecil) yang tersimpan di browser user untuk mengingat hal-hal seperti status logged atau preferensi user di dalam suatu web app.
+
+- Kelebihan: 
+    - Kecepatan load data di browser client lebih cepat.
+    - Umur data bisa di manage sendiri.
+    - Data masih ada setelah browser di-close.
+
+- Kekurangan:
+    - Keamanan data kurang selama berada di dalam browser user.
+    - Ada limit data tersimpan, biasanya 4KB.
+
+- Contoh: Google, Facebook, Amazon, YouTube, Netflix, dsb.
+
+**Session**: Sama seperti cookies, tetapi data di simpan di dalam server.
+
+- Kelebihan:
+    - Keamanan data yang tersimpan lebih terjamin.
+    - Bisa menyimpan data dalam ukuran yang besar.
+
+- Kekurangan:
+    - Kecepatan load data lebih lambat.
+    - Data biasanya otomatis hilang jika tidak digunakan dalam jangka waktu tertentu.
+    - Data hilang ketika sesi expired atau server melakukan restart.
+
+- Contoh: Banking App, Platform E-Learning, Website Pemerintahan, dsb.
+
+Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-cookies/
+
+1. `login(request, user)` pada kode di bawah  
+    ```python
+    def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+    else:
+        form = AuthenticationForm(request)
+    context = {'form': form}
+    return render(request, 'login.html', context)
+
+
 
 # Tugas 3 | Data Delivery
 
