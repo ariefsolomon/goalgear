@@ -2,9 +2,7 @@
 
 **Muhammad Arief Solomon - 2406343092 - PBP E**
 
-**Link Aplikasi Web**:
-
-goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
+**Link Aplikasi Web**: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 # Tugas 4 | Autentikasi, Session, dan Cookies
 
@@ -134,6 +132,44 @@ Permasalahan security mengenai cookie di Django adalah sebagai berikut:
 _Attacker_ dapat melacak sesi cookie melalui jaringan publik seperti WIFI.
 - Solusi: Tetapkan `SESSION_COOKIE_SECURE = True` dengan alasan sama seerti poin sebelumnya.
 
+## Implementasi Tugas 4
+
+Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna mengakses aplikasi sebelumnya sesuai dengan status login/logoutnya.
+Membuat dua (2) akun pengguna dengan masing-masing tiga (3) dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal.
+Menghubungkan model Product dengan User.
+Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last_login pada halaman utama aplikasi.
+
+1. **Implementasi Fungsi Registrasi, Login, dan Logout**
+    - Registrasi menggunakan `UserCreationForm` untuk membuat akun baru.
+    - Login menggunakan `AuthenticationForm`, jika valid maka user diarahkan ke halaman utama, serta disimpan cookie `last_login`.
+    - Logout menghapus session user dan cookie `last_login`, lalu diarahkan ke halaman login.
+2. **Menghubungkan Model `Product` dengan `User`**
+    Pada model `Product` ditambahkan:
+    ```python
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    ```
+3. **Menampilkan Informasi User berdasarkan Cookie**
+
+   Pada fungsi `show_main`, disertakan data bernama `last_login` di dalam `context`:
+    ```python
+    @login_required(login_url='/login')
+    def show_main(request):
+        ...
+        context = {
+            ...
+            'last_login': request.COOKIES.get('last_login', 'Never'),
+        }
+        ...
+    ```
+    Lalu di dalam `main.html`, data tersebut ditampilkan dengan:
+    ```html
+    <h5>Nama: </h5>
+    <p>{{ student_name }}</p>
+    
+    <h5>Sesi terakhir login: {{ last_login }}</h5>
+    ```
+
+
 # Tugas 3 | Data Delivery
 
 ## Mengapa perlu _data delivery_ dalam sebuah platform?
@@ -173,7 +209,7 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 -   Saat form disubmit, token itu dikirim ke server. Django memeriksa token tersebut cocok dengan token di cookie/session. Hasilnya: hanya permintaan yang berasal dari page asli yang memiliki token valid yang akan diterima.
 -   Karena _attacker_ tidak dapat membaca token itu dari domain korban (_same-origin policy_), dia tidak dapat menyertakan token valid dalam form palsunya, sehingga permintaan palsu akan ditolak.
 
-## Penjelasan Implementasi Tugas 3
+## Implementasi Tugas 3
 
 1. *Pembuatan 4 Fungsi `views.py`*: Mebuat fungsi `show_xml`, `show_json`, `show_xml_by_id`, `show_json_by_id` untuk mengakses dan menampilkan data dalam format `JSON` dan `XML` di browser berdasarkan `Tutorial 2` yang diberikan.
 2. *Membuat Routing 4 Fungsi Show*: Membuat routing url untuk masing-masing fungsi show di dalam `views.py` sebelumnya di dalam `main/urls.py` agar user dapat melakukan request dan mengakses masing-masing page data sesuai dengan `Tutorial 2` yang diberikan.
@@ -267,4 +303,5 @@ Mengatur konfigurasi proyek keseluruhan seperti aplikasi terinstall, database, m
 ## Feedback untuk Asisten Dosen
 
 Tutorial yang diberikan sudah sangat baik, namun bisa dijelaskan lebih lanjut di kelas, karena awalnya saya sedikit bingung dan menghabiskan waktu di pre-tutorial dikarenakan saya menganggap hal tersebut wajib dikerjakan sebelum tutorial.
+
 
