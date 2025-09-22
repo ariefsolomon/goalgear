@@ -31,21 +31,29 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     else:
         form = AuthenticationForm(request)
     return render(request, 'login.html', {'form': form})
+    ```
+
 2. Decorator `@login_required(login_url='/login')` biasanya dipasang di view selain `login_user` (seperti `show_main` dan `show_product`) untuk memastikan hanya user yang sudah login yang bisa mengakses page tersebut. Jika belum login, user akan diarahkan ke halaman login.
     ```python
     @login_required(login_url='/login')
     def show_main(request):
         ...
         return render(request, 'main.html', context)
+    ```
+
 3. User mengisi *username* dan *password* yang diproses oleh `AuthenticationForm` dalam objek `form`.
     ```python
     form = AuthenticationForm(data=request.POST)
+    ```
+
 4. `form.is_valid()` akan memanggil `authenticate()` untuk memverifikasi objek `User` di database (melalui model `User` bawaan Django atau custom user model).
    - Jika user valid, objek `User` disimpan di `user_cache`, dan bisa diambil lewat `form.get_user()`.
    - Jika tidak valid, `form.get_user()` mengembalikan `None`.
     ```python
     if form.is_valid():
         user = form.get_user()
+    ```
+
 5. `login(request, user)` kemudian menyimpan informasi user ke dalam session (dengan menyimpan `user.id`), dan mengirim cookie `sessionid` ke browser.  
    Dengan cara ini, Django bisa mengenali user yang sedang login pada request berikutnya.
     ```python
@@ -53,6 +61,7 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
     response = HttpResponseRedirect(reverse("main:show_main"))
     response.set_cookie('last_login', str(datetime.datetime.now()))
     return response
+    ```
 
 **Authorization**: Mengizinkan user dengan identitas tertentu (username dan password, atau atribut lainnya) untuk mengakses page atau fungsi tertentu di dalam aplikasi web. 
 1. Setelah user login melalui `login_user`, Django menyimpan informasi user ke dalam session (`sessionid`).
@@ -91,21 +100,34 @@ goalgear [PWS]: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
 Sumber: https://www.geeksforgeeks.org/javascript/difference-between-session-and-cookies/
 
-1. `login(request, user)` pada kode di bawah  
-    ```python
+## Keamanan Cookies dalam Django
+    
+    ```views.py
     def login_user(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
+        ...
         if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+            ...
             response = HttpResponseRedirect(reverse("main:show_main"))
             response.set_cookie('last_login', str(datetime.datetime.now()))
             return response
     else:
-        form = AuthenticationForm(request)
-    context = {'form': form}
-    return render(request, 'login.html', context)
+        ...
+    ```
+
+Pada bagian `response.set_cookies('last_login', ...)`, berfungsi untuk mendaftarkan cookie `last_login` di `response`. 
+
+    ```show_main()
+    def show_main(request):
+    ...
+    context = {
+        ...
+        'last_login': request.COOKIES.get('last_login', 'Never'),
+    }
+    ... 
+    ```
+
+Sementara di dalam `show_main`, `.get()` mengambil cookie `last_login`, jika tidak ditemukan -> akan mengembalikan nilai default `Never`.
 
 
 
