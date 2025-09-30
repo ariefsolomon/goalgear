@@ -101,18 +101,18 @@ def logout_user(request):
     return response
 
 def edit_product(request, id):
-    product = get_object_or_404(Product, pk=id)
+    product = get_object_or_404(Product, pk=id, user=request.user)
     form = ProductForm(request.POST or None, instance=product)
-    if form.is_valid() and request.method == 'POST':
+    if request.method == 'POST' and form.is_valid():
         form.save()
         return redirect('main:show_main')
-    context = {
-        'form': form,
-        'product': product,
-    }
+    context = {"form": form, "product": product}
     return render(request, "edit_product.html", context)
 
 def delete_product(request, id):
-    product = get_object_or_404(Product, pk=id)
-    product.delete()
-    return HttpResponseRedirect(reverse('main:show_main'))
+    product = get_object_or_404(Product, pk=id, user=request.user)
+    if request.method == "POST":
+        product.delete()
+        return redirect('main:show_main')
+    context = {"product": product}
+    return render(request, "confirm_delete.html", context)
