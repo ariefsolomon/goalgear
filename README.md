@@ -12,11 +12,11 @@ Ketika ada lebih dari satu aturan CSS yang menargetkan elemen yang sama, browser
 
 **Aturan prioritas:**
 
-1. `!important` → Paling tinggi.
-2. Asal aturan → User Agent < User < Author.
-3. Spesifisitas → ID > Class > Elemen.
-4. Urutan deklarasi → Aturan terakhir akan menang jika spesifisitas sama.
-5. Warisan (inheritance) → Properti diwarisi dari parent jika tidak didefinisikan.
+1. `!important` --> Paling tinggi.
+2. Asal aturan --> User Agent < User < Author.
+3. Spesifisitas --> ID > Class > Elemen.
+4. Urutan deklarasi --> Aturan terakhir akan menang jika spesifisitas sama.
+5. Warisan (inheritance) --> Properti diwarisi dari parent jika tidak didefinisikan.
 
 **Contoh:**
 
@@ -46,16 +46,16 @@ Konsep desain web yang memastikan tampilan aplikasi tetap rapi dan nyaman diguna
 
 **Contoh:**
 
-- **Sudah responsif** → The Boston Globe, e-commerce modern, blog dengan Bootstrap/Tailwind.
-- **Belum responsif** → Situs lama dengan layout fixed width, tidak menggunakan meta viewport.
+- **Sudah responsif** --> The Boston Globe, e-commerce modern, blog dengan Bootstrap/Tailwind.
+- **Belum responsif** --> Situs lama dengan layout fixed width, tidak menggunakan meta viewport.
 
 ## Margin, Border, dan Padding
 
 Ketiganya adalah bagian dari **CSS Box Model**.
 
-- **Margin** → Jarak luar antar elemen.
-- **Border** → Garis tepi di sekeliling elemen.
-- **Padding** → Jarak dalam, antara konten dan border.
+- **Margin** --> Jarak luar antar elemen.
+- **Border** --> Garis tepi di sekeliling elemen.
+- **Padding** --> Jarak dalam, antara konten dan border.
 
 **Contoh:**
 
@@ -120,8 +120,8 @@ Dashboard, layout halaman penuh, struktur kompleks.
 
 ## Perbandingan Flexbox & Grid
 
-- **Flexbox** → Satu arah (row/column).
-- **Grid** → Dua arah (baris + kolom).
+- **Flexbox** --> Satu arah (row/column).
+- **Grid** --> Dua arah (baris + kolom).
 - Bisa digabung: Grid untuk struktur besar, Flexbox untuk detail isi.
 
 ## Referensi
@@ -132,6 +132,70 @@ Dashboard, layout halaman penuh, struktur kompleks.
 - [MDN – Box Model](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Box_model?utm_source=chatgpt.com)
 - [Web.dev – Responsive Web Design Basics](https://web.dev/articles/responsive-web-design-basics?utm_source=chatgpt.com)
 - [Wikipedia – Responsive Web Design](https://en.wikipedia.org/wiki/Responsive_web_design?utm_source=chatgpt.com)
+
+## Implementasi Tugas 5
+
+### 1. Fungsi Edit & Delete Product
+- **Edit Product**  
+  - Ditambahkan fungsi `edit_product` pada `views.py` dengan `ProductForm(instance=product)` agar data lama bisa ditampilkan kembali di form.  
+  - Form ini memungkinkan user mengubah informasi produk yang sudah ada.  
+
+- **Delete Product**  
+  - Ditambahkan fungsi `delete_product` pada `views.py` untuk menghapus produk berdasarkan `id`.  
+  - Redirect otomatis ke halaman daftar produk setelah produk dihapus.  
+
+- **Routing**  
+  - Ditambahkan path baru di `urls.py`:
+    ```python
+    path('product/<uuid:id>/edit', edit_product, name='edit_product'),
+    path('product/<uuid:id>/delete', delete_product, name='delete_product'),
+    ```
+
+- **UI**  
+  - Tombol **Edit** dan **Delete** ditambahkan pada setiap card produk di `main.html` dan halaman `product_detail.html`.
+
+### 2. Kustomisasi Desain dengan Tailwind (Glassmorphism)
+- Semua halaman (`login.html`, `register.html`, `create_product.html`, `edit_product.html`, `product_detail.html`, dan `main.html`) didesain ulang menggunakan **TailwindCSS**.  
+- Menggunakan class:
+  - `bg-white/30` --> transparansi background.
+  - `backdrop-blur-md` / `backdrop-blur-xl` --> efek blur kaca.
+  - `rounded-2xl shadow-lg`
+
+### 3. Page Daftar Produk
+- **Jika belum ada produk:**  
+  - Menggunakan kondisi `if not product_list`.  
+  - Menampilkan ilustrasi ikon 📦 + pesan “Belum ada produk, tambahkan produk pertama sekarang!”.  
+- **Jika ada produk:**  
+  - Produk ditampilkan dalam **grid responsif** dengan Tailwind:
+    ```html
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <!-- Card produk --->
+    </div>
+    ```
+  - Setiap card berisi thumbnail, nama produk, kategori, deskripsi singkat, dan tombol aksi.  
+  - Card menggunakan desain animasi `hover:-translate-y-1` + `hover:shadow-2xl`.
+
+### 4. Card Produk dengan Edit & Delete Button
+- Pada setiap card produk:
+  - **Detail** --> untuk melihat detail produk.
+  - **Edit** --> hanya tampil jika produk milik user yang sedang login.
+  - **Delete** --> hanya tampil jika produk milik user.  
+- Tombol di-style dengan efek glass blur:
+    ```html
+  <button class="px-4 py-1 rounded-lg bg-red-500/30 backdrop-blur-md hover:bg-red-500/50 text-red-900">
+      Hapus
+  </button>
+
+### 5. Navbar Responsif
+- Navbar dibuat di `navbar.html` dan di-include ke semua halaman melalui `base.html`.
+    ```html
+    <nav class="fixed top-4 left-1/2 transform -translate-x-1/2
+            bg-white/30 backdrop-blur-xl shadow-lg rounded-2xl
+            px-6 py-3 z-50 w-[90%] md:w-[70%] lg:w-[60%]">
+    ```
+- Versi Desktop: menu horizontal dengan `md:flex`.
+- Versi Mobile: menu tersembunyi (`hidden md:hidden`) dan muncul ketika tombol hamburger diklik menggunakan JavaScript.
+- Navbar bersifat fixed, sehingga tetap terlihat saat pengguna scroll halaman.
 
 
 # Tugas 4 | Autentikasi, Session, dan Cookies
@@ -189,8 +253,8 @@ Dashboard, layout halaman penuh, struktur kompleks.
 **Authorization**: Mengizinkan user dengan identitas tertentu (username dan password, atau atribut lainnya) untuk mengakses page atau fungsi tertentu di dalam aplikasi web. 
 1. Setelah user login melalui `login_user`, Django menyimpan informasi user ke dalam session (`sessionid`).
 2. Middleware `AuthenticationMiddleware` otomatis menambahkan atribut `request.user` ke setiap request.
-   - Jika user sudah login -> `request.user` berisi objek `User`.
-   - Jika belum login -> `request.user` adalah `AnonymousUser`.
+   - Jika user sudah login --> `request.user` berisi objek `User`.
+   - Jika belum login --> `request.user` adalah `AnonymousUser`.
 3. Fungsi view yang diproteksi dengan `@login_required` hanya bisa diakses oleh user yang sudah login, seperti pada pembahasan pada _Authentication_ poin ke-2.
 
 ## Sessions dan Cookies
@@ -249,7 +313,7 @@ def show_main(request):
     }
 ```
 
-Sementara di dalam `show_main`, `.get()` mengambil cookie `last_login`, jika tidak ditemukan -> akan mengembalikan nilai default `Never`.
+Sementara di dalam `show_main`, `.get()` mengambil cookie `last_login`, jika tidak ditemukan --> akan mengembalikan nilai default `Never`.
 
 Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
 
@@ -300,7 +364,7 @@ _Attacker_ dapat melacak sesi cookie melalui jaringan publik seperti WIFI.
 
 *Data delivery* adalah proses mengirimkan data dari server ke client agar data dapat ditampilkan, digunakan, atau diolah lebih lanjut. Data yang dikirimkan ke client berbentuk HTML, JSON, XML, dll.
 
-Django sendiri melakukan _data delivery_ dengan alur mekanisme *request -> view -> response*:
+Django sendiri melakukan _data delivery_ dengan alur mekanisme *request --> view --> response*:
 1. User kirim request, misalnya `url/product/<id product>/` atau menekan tombol `See Detail` pada salah satu product di page `main.html`.
 2. `urls.py` mengarahkan ke fungsi `show_product` yang berada di `views.py`.
 3. `show_product` menerima `request` dan `id` product untuk mengangkap objek product dengan variable `product` menggunakan `get_object_or_404(Product, pk=id)` dari `models.py` dan database.
@@ -322,9 +386,9 @@ Sumber: https://aws.amazon.com/compare/the-difference-between-json-xml/
 ## Fungsi Method `is_valid()` di `views.py`
 
 `is_valid()` digunakan untuk menerima dan melakukan validasi input user, biasanya dalam data form. Misalnya, `is_valid()` yang berada di dalam method `create_product` di `views.py` dengan penjelasan:
-1. Variable `form` menangkap `ProductForm(request.POST or None)` -> form diisi dengan input dari user.
+1. Variable `form` menangkap `ProductForm(request.POST or None)` --> form diisi dengan input dari user.
 2. `if form.is_valid()` mengecek apakah input sesuai dengan fields yang didefinisikan di `ProductForm` di `forms.py` (berdasarkan `Product` di `models.py`) serta `request.method == "POST"` memastikan memang ada pengiriman form (bukan hanya akses page). 
-3. Jika hasil `True` -> `form.save` dan `return redirect("main:show_main")` untuk kembali ke page utama. Jika hasil `False` -> kalau pertama kali akses page (GET) -> form kosong ditampilkan; kalau submit tapi ada error (_invalid input_) -> menampilkan _error message_ dari `form`.
+3. Jika hasil `True` --> `form.save` dan `return redirect("main:show_main")` untuk kembali ke page utama. Jika hasil `False` --> kalau pertama kali akses page (GET) --> form kosong ditampilkan; kalau submit tapi ada error (_invalid input_) --> menampilkan _error message_ dari `form`.
 
 ## Kenapa perlu `csrf_token` saat membuat form di Django?
 
@@ -415,7 +479,7 @@ Mengatur konfigurasi proyek keseluruhan seperti aplikasi terinstall, database, m
 
 -   `python manage.py makemigrations`: Ketika kita selesai membuat/mengubah model di `models.py` (misalnya `Product`), Django membaca perubahannya lalu membuat file migrasi di folder `migrations/` yang berisi instruksi python untuk mengubah database, misalnya membuat tabel baru, menambah kolom, menghapus kolom, dll, sehingga kita tidak perlu menulis SQL manual.
 -   `python manage.py migrate`: Django mengeksekusi file migrasi tadi, hasilnya akan diubah jadi perintah SQL sesuai dengan database yang diimplementasikan (misalnya PostgreSQL)
--   Setelah migrate, struktur berubah sesuai dengan model di dalam `models.py`. Misalnya kita menambah field baru untuk `Product` dengan `stock = models.IntegerField()` lalu `makemigrations` -> `migrate` seperti yang dijelaskan sebelumnya, Django akan menambah kolom `stock` ke tabel `Product`.
+-   Setelah migrate, struktur berubah sesuai dengan model di dalam `models.py`. Misalnya kita menambah field baru untuk `Product` dengan `stock = models.IntegerField()` lalu `makemigrations` --> `migrate` seperti yang dijelaskan sebelumnya, Django akan menambah kolom `stock` ke tabel `Product`.
 
 ## Mengapa Django untuk Pemula
 
