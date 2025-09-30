@@ -1,59 +1,124 @@
 {% extends 'base.html' %}
 {% block content %}
+    {% include 'navbar.html' %}
 
-<h1>Selamat datang di {{ app_name }}</h1>
+    <!-- Background gradient -->
+    <div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-10 px-4 pt-28">
+        <div class="max-w-7xl mx-auto">
+            <!-- Judul -->
+            <h1 class="text-5xl font-extrabold mb-10 text-center text-gray-800 drop-shadow">
+                Selamat datang di <span class="text-blue-700">{{ app_name }}</span>
+            </h1>
 
-<h5>Nama: </h5>
-<p>{{ student_name }}</p>
-<h5>Kelas: </h5>
-<p>{{ student_class }}</p>
+            <!-- Info Session -->
+            <p class="text-sm text-gray-700 mb-4 text-left italic">
+                ⏰ Sesi terakhir login: {{ last_login }}
+            </p>
 
-<a href="{% url 'main:create_product' %}">
-    <button>+ Add Product</button>
-</a>
+            <!-- Tombol Aksi -->
+            <div class="flex flex-wrap justify-left gap-4 mb-4">
+                <a href="{% url 'main:create_product' %}">
+                    <button class="px-6 py-2 rounded-xl bg-white/30 backdrop-blur-md shadow-md text-gray-800 font-semibold hover:bg-white/40 transition">
+                        ➕ Tambah Produk
+                    </button>
 
-<a href="{% url 'main:logout' %}">
-    <button>Logout</button>
-</a>
+                </a>
+                <a href="{% url 'main:logout' %}">
+                    <button class="px-6 py-2 rounded-xl bg-white/30 backdrop-blur-md text-red-500 0 font-semibold shadow-md hover:bg-white/40 transition">
+                        Logout
+                    </button>
+                </a>
+            </div>
 
-<h5>Sesi terakhir login: {{ last_login }}</h5>
+            <!-- Filter Produk -->
+            <div class="flex justify-left gap-3 mb-12">
+                <a href="?filter=all">
+                    <button class="px-5 py-2 rounded-xl bg-blue-500/60 text-white shadow-md backdrop-blur-md hover:bg-blue-600/70">
+                        Semua Produk
+                    </button>
+                </a>
+                <a href="?filter=my">
+                    <button class="px-5 py-2 rounded-xl bg-indigo-500/60 text-white shadow-md backdrop-blur-md hover:bg-indigo-600/70">
+                        Produk Saya
+                    </button>
+                </a>
+            </div>
 
-<a href="?filter=all">
-    <button type="button">All Product</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Product</button>
-</a> 
+            <!-- Daftar Produk -->
+            {% if not product_list %}
+                <!-- Kondisi kosong -->
+                <div class="flex flex-col items-center justify-center text-center py-20">
+                    <div class="w-40 h-40 flex items-center justify-center bg-white/30 backdrop-blur-xl rounded-full shadow-lg mb-6">
+                        <span class="text-6xl">📦</span>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Belum ada produk</h2>
+                    <p class="text-gray-600">Tambahkan produk pertamamu sekarang!</p>
+                </div>
+            {% else %}
+                <!-- Grid produk -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                    {% for product in product_list %}
+                        <div class="bg-white/30 backdrop-blur-lg shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
+                            <!-- Thumbnail -->
+                            {% if product.thumbnail %}
+                                <img src="{{ product.thumbnail }}" alt="thumbnail"
+                                    class="w-full h-48 object-cover">
+                            {% else %}
+                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
+                                    No Image
+                                </div>
+                            {% endif %}
 
-<hr>
+                            <!-- Konten -->
+                            <div class="p-5">
+                                <!-- Nama Produk -->
+                                <h2 class="text-2xl font-bold mb-2 text-gray-900 truncate">
+                                    {{ product.name }}
+                                </h2>
 
-{% if not product_list %}
-<p>Belum ada product.</p>
-{% else %}
-{% for product in product_list %}
-<div>
-    <h2>
-        <a href="{% url 'main:show_main' %}">{{ product.name }}</a>
-    </h2>
+                                <!-- Kategori -->
+                                <p class="text-sm text-gray-700 mb-3">
+                                    <b>{{ product.get_category_display }}</b>
+                                    {% if product.is_featured %} 
+                                    <span class="ml-1 px-2 py-0.5 bg-yellow-200/60 text-yellow-800 text-xs rounded-full backdrop-blur-sm">⭐ Featured</span>
+                                    {% endif %}
+                                </p>
+                                
+                                <!-- Deskripsi -->
+                                <p class="text-gray-800 text-sm mb-3 line-clamp-2">
+                                    {{ product.description }}
+                                </p>
+                                
+                                <!-- Nama Pembuat -->
+                                <p class="text-sm text-gray-600 mb-5">
+                                    👤 <span class="font-semibold">{{ product.user.username }}</span>
+                                </p>
 
-    <p>
-        <b>{{ product.get_category_display }}</b>{% if product.is_featured %} |
-        <b>Featured</b>{% endif %}
-    </p>
-
-    {% if product.thumbnail %}
-    <img src="{{ product.thumbnail }}" alt="thumbnail" width="150", height="100">
-    <br />
-    {% endif %}
-
-    <p>{{ product.description|truncatewords:10 }}...</p>
-
-    <p><a href="{% url 'main:show_product' product.id %}"><button>See Detail</button></a></p>
-</div>
-
-<hr>
-{% endfor %}
-
-{% endif %}
-
+                                <!-- Tombol Aksi -->
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{% url 'main:show_product' product.id %}">
+                                        <button class="px-4 py-1 rounded-lg bg-blue-500/70 text-white hover:bg-blue-600/80 backdrop-blur-md">
+                                            Detail
+                                        </button>
+                                    </a>
+                                    {% if product.user == user %}
+                                        <a href="{% url 'main:edit_product' product.id %}">
+                                            <button class="px-4 py-1 rounded-lg bg-yellow-400/70 text-white hover:bg-yellow-500/80 backdrop-blur-md">
+                                                Edit
+                                            </button>
+                                        </a>
+                                        <a href="{% url 'main:delete_product' product.id %}">
+                                            <button class="px-4 py-1 rounded-lg bg-red-500/70 text-white hover:bg-red-600/80 backdrop-blur-md">
+                                                Hapus
+                                            </button>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% endblock content %}
