@@ -2,38 +2,94 @@
 <nav class="fixed top-4 left-1/2 transform -translate-x-1/2 
             bg-white/30 backdrop-blur-xl shadow-lg rounded-2xl 
             px-6 py-3 z-50 w-[90%] md:w-[70%] lg:w-[60%]">
-    <div class="flex justify-between items-center">
-        <!-- Brand -->
-        <h1 class="text-2xl font-extrabold text-blue-700">GoalGear</h1>
+  <div class="flex justify-between items-center">
+    <!-- Brand -->
+    <h1 class="text-2xl font-extrabold text-blue-700">GoalGear</h1>
 
-        <!-- Hamburger (mobile) -->
-        <button class="md:hidden" id="menu-btn">
-            <svg class="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
+    <!-- Hamburger (mobile) -->
+    <button class="md:hidden" id="menu-btn">
+      <svg class="w-7 h-7 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
 
-        <!-- Menu (desktop) -->
-        <ul class="hidden md:flex gap-6 font-medium text-gray-800">
-            <li><a href="{% url 'main:show_main' %}" class="hover:text-blue-600">Home</a></li>
-            <li><a href="{% url 'main:create_product' %}" class="hover:text-blue-600">Tambah Produk</a></li>
-            <li><a href="{% url 'main:logout' %}" class="text-red-600">Logout</a></li>
-        </ul>
-    </div>
+    <!-- Menu (desktop) -->
+    <ul class="hidden md:flex gap-6 font-medium text-gray-800 items-center">
+      <li><a href="{% url 'main:show_main' %}" class="hover:text-blue-600">Home</a></li>
+      <li>
+        <a href="#" onclick="showModal()" class="hover:text-blue-600">
+          Tambah Produk
+        </a>
+      </li>
 
-    <!-- Dropdown (mobile) -->
-    <ul class="hidden flex-col mt-3 gap-3 md:hidden text-gray-800 font-medium" id="menu">
-        <li><a href="{% url 'main:show_main' %}" class="hover:text-blue-600">Home</a></li>
-        <li><a href="{% url 'main:create_product' %}" class="hover:text-blue-600">Tambah Produk</a></li>
-        <li><a href="{% url 'main:logout' %}" class="text-red-600">Logout</a></li>
+      {% if user.is_authenticated %}
+        <li>
+          <button 
+            onclick="logoutAjax()" 
+            class="text-red-600 font-semibold hover:underline">
+            Logout
+          </button>
+        </li>
+      {% else %}
+        <li>
+          <button 
+            onclick="showLoginModal()" 
+            class="text-blue-600 font-semibold hover:underline">
+            Login
+          </button>
+        </li>
+      {% endif %}
     </ul>
+  </div>
+
+  <!-- Dropdown (mobile) -->
+  <ul class="hidden flex-col mt-3 gap-3 md:hidden text-gray-800 font-medium" id="menu">
+    <li><a href="{% url 'main:show_main' %}" class="hover:text-blue-600">Home</a></li>
+    <li><a href="#" onclick="showModal()" class="hover:text-blue-600">Tambah Produk</a></li>
+
+    {% if user.is_authenticated %}
+      <li>
+        <button 
+          onclick="logoutAjax()" 
+          class="text-red-600 font-semibold hover:underline">
+          Logout
+        </button>
+      </li>
+    {% else %}
+      <li>
+        <button 
+          onclick="showLoginModal()" 
+          class="text-blue-600 font-semibold hover:underline">
+          Login
+        </button>
+      </li>
+    {% endif %}
+  </ul>
 </nav>
 
 <script>
-    const btn = document.getElementById('menu-btn');
-    const menu = document.getElementById('menu');
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+
+  async function logoutAjax() {
+    try {
+      const res = await fetch("{% url 'main:logout_user_ajax' %}", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message, '', 'success');
+        setTimeout(() => location.reload(), 800);
+      } else {
+        showToast('Logout gagal', '', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Terjadi kesalahan pada logout', '', 'error');
+    }
+  }
 </script>

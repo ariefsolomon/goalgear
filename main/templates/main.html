@@ -17,6 +17,11 @@
         class="inline-flex items-center px-4 py-2 bg-white text-blue-600 font-semibold outline outline-2 outline-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition-colors mb-6">
         ➕ Tambah Produk via AJAX   
     </button>
+    <button onclick="refreshProducts()" 
+        class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-colors mb-6 ml-2">
+        🔄 Refresh Produk
+    </button>
+
     <p class="text-gray-600">Temukan perlengkapan olahraga terbaik untuk performa maksimal</p>
     </div>
 
@@ -166,6 +171,11 @@ fetchProducts();
 document.addEventListener('productAdded', function() {
     fetchProducts();
 });
+
+function refreshProducts() {
+  showToast('Merefresh produk...', '', 'info');
+  fetchProducts();
+}
 
 </script>
 {% endblock content %}

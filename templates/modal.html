@@ -140,6 +140,52 @@
   </div>
 </div>
 
+<!-- ==================== MODAL LOGIN ==================== -->
+<div id="loginModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+  <div id="loginModalContent" class="bg-white rounded-lg shadow-lg w-80 p-6 transition-all duration-200 opacity-0 scale-95">
+    <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Login</h3>
+    <form id="loginForm">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Username</label>
+        <input id="login-username" name="username" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="login-password" name="password" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2" required>
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Login</button>
+    </form>
+    <p class="text-sm text-gray-600 mt-4 text-center">Belum punya akun? 
+      <a href="#" onclick="switchToRegister()" class="text-blue-600 hover:underline">Daftar</a>
+    </p>
+  </div>
+</div>
+
+<!-- ==================== MODAL REGISTER ==================== -->
+<div id="registerModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+  <div id="registerModalContent" class="bg-white rounded-lg shadow-lg w-80 p-6 transition-all duration-200 opacity-0 scale-95">
+    <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Register</h3>
+    <form id="registerForm">
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Username</label>
+        <input id="register-username" name="username" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="register-password" name="password" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700">Konfirmasi Password</label>
+        <input type="password" id="register-confirm" name="confirm_password" class="mt-1 w-full border border-gray-300 rounded-md px-3 py-2" required>
+      </div>
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition">Daftar</button>
+    </form>
+    <p class="text-sm text-gray-600 mt-4 text-center">Sudah punya akun? 
+      <a href="#" onclick="switchToLogin()" class="text-blue-600 hover:underline">Login</a>
+    </p>
+  </div>
+</div>
+
 <!-- Script untuk modal -->
 <script>
   function showModal() {
@@ -229,7 +275,6 @@ document.getElementById("editForm").addEventListener("submit", async function(e)
   fetchProducts();
 });
 
-// === Delete Modal ===
 function showDeleteModal(productId) {
   selectedProductId = productId;
   const modal = document.getElementById("deleteModal");
@@ -256,13 +301,81 @@ document.getElementById("confirmDeleteBtn").addEventListener("click", async () =
   fetchProducts();
 });
 
-    document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("productForm");
-    if (form) {
-        form.addEventListener("submit", function(e) {
-        e.preventDefault();
-        addProductEntry();
-        });
-    }
+document.addEventListener("DOMContentLoaded", function() {
+const form = document.getElementById("productForm");
+if (form) {
+    form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    addProductEntry();
     });
+}
+});
+function showLoginModal() {
+  const m = document.getElementById("loginModal");
+  const c = document.getElementById("loginModalContent");
+  m.classList.remove("hidden");
+  setTimeout(() => c.classList.replace("opacity-0", "opacity-100"));
+}
+function hideLoginModal() {
+  const m = document.getElementById("loginModal");
+  const c = document.getElementById("loginModalContent");
+  c.classList.replace("opacity-100", "opacity-0");
+  setTimeout(() => m.classList.add("hidden"), 150);
+}
+
+function showRegisterModal() {
+  const m = document.getElementById("registerModal");
+  const c = document.getElementById("registerModalContent");
+  m.classList.remove("hidden");
+  setTimeout(() => c.classList.replace("opacity-0", "opacity-100"));
+}
+function hideRegisterModal() {
+  const m = document.getElementById("registerModal");
+  const c = document.getElementById("registerModalContent");
+  c.classList.replace("opacity-100", "opacity-0");
+  setTimeout(() => m.classList.add("hidden"), 150);
+}
+
+function switchToRegister() {
+  hideLoginModal();
+  setTimeout(showRegisterModal, 200);
+}
+function switchToLogin() {
+  hideRegisterModal();
+  setTimeout(showLoginModal, 200);
+}
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const res = await fetch("{% url 'main:login_user_ajax' %}", {
+    method: "POST",
+    body: new FormData(form),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showToast(data.message, '', 'success');
+    hideLoginModal();
+    setTimeout(() => location.reload(), 800); 
+  } else {
+    showToast(data.error, '', 'error');
+  }
+});
+
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const res = await fetch("{% url 'main:register_user_ajax' %}", {
+    method: "POST",
+    body: new FormData(form),
+  });
+  const data = await res.json();
+  if (res.ok) {
+    showToast(data.message, '', 'success');
+    hideRegisterModal();
+    setTimeout(showLoginModal, 800);
+  } else {
+    showToast(data.error, '', 'error');
+  }
+});
 </script>

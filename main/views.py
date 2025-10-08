@@ -192,10 +192,44 @@ def edit_product_ajax(request, id):
     product.save()
     return HttpResponse(b"UPDATED", status=200)
 
-
 @csrf_exempt
 @require_POST
 def delete_product_ajax(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
     return HttpResponse(b"DELETED", status=200)
+
+@csrf_exempt
+@require_POST
+def login_user_ajax(request):
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return JsonResponse({"message": "Login berhasil!"}, status=200)
+    else:
+        return JsonResponse({"error": "Username atau password salah."}, status=401)
+
+
+@csrf_exempt
+@require_POST
+def register_user_ajax(request):
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    confirm_password = request.POST.get("confirm_password")
+
+    if password != confirm_password:
+        return JsonResponse({"error": "Password tidak cocok!"}, status=400)
+    if User.objects.filter(username=username).exists():
+        return JsonResponse({"error": "Username sudah digunakan!"}, status=400)
+
+    User.objects.create_user(username=username, password=password)
+    return JsonResponse({"message": "Registrasi berhasil!"}, status=201)
+
+
+@csrf_exempt
+@require_POST
+def logout_user_ajax(request):
+    logout(request)
+    return JsonResponse({"message": "Logout berhasil!"}, status=200)
