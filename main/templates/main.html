@@ -1,124 +1,171 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
-    {% include 'navbar.html' %}
+{% include 'navbar.html' %}
 
-    <!-- Background gradient -->
-    <div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 py-10 px-4 pt-28">
-        <div class="max-w-7xl mx-auto">
-            <!-- Judul -->
-            <h1 class="text-5xl font-extrabold mb-10 text-center text-gray-800 drop-shadow">
-                Selamat datang di <span class="text-blue-700">{{ app_name }}</span>
-            </h1>
+<div class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 w-full pt-24 min-h-screen">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-            <!-- Info Session -->
-            <p class="text-sm text-gray-700 mb-4 text-left italic">
-                ⏰ Sesi terakhir login: {{ last_login }}
-            </p>
-
-            <!-- Tombol Aksi -->
-            <div class="flex flex-wrap justify-left gap-4 mb-4">
-                <a href="{% url 'main:create_product' %}">
-                    <button class="px-6 py-2 rounded-xl bg-white/30 backdrop-blur-md shadow-md text-gray-800 font-semibold hover:bg-white/40 transition">
-                        ➕ Tambah Produk
-                    </button>
-
-                </a>
-                <a href="{% url 'main:logout' %}">
-                    <button class="px-6 py-2 rounded-xl bg-white/30 backdrop-blur-md text-red-500 0 font-semibold shadow-md hover:bg-white/40 transition">
-                        Logout
-                    </button>
-                </a>
-            </div>
-
-            <!-- Filter Produk -->
-            <div class="flex justify-left gap-3 mb-12">
-                <a href="?filter=all">
-                    <button class="px-5 py-2 rounded-xl bg-blue-500/60 text-white shadow-md backdrop-blur-md hover:bg-blue-600/70">
-                        Semua Produk
-                    </button>
-                </a>
-                <a href="?filter=my">
-                    <button class="px-5 py-2 rounded-xl bg-indigo-500/60 text-white shadow-md backdrop-blur-md hover:bg-indigo-600/70">
-                        Produk Saya
-                    </button>
-                </a>
-            </div>
-
-            <!-- Daftar Produk -->
-            {% if not product_list %}
-                <!-- Kondisi kosong -->
-                <div class="flex flex-col items-center justify-center text-center py-20">
-                    <div class="w-40 h-40 flex items-center justify-center bg-white/30 backdrop-blur-xl rounded-full shadow-lg mb-6">
-                        <span class="text-6xl">📦</span>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Belum ada produk</h2>
-                    <p class="text-gray-600">Tambahkan produk pertamamu sekarang!</p>
-                </div>
-            {% else %}
-                <!-- Grid produk -->
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {% for product in product_list %}
-                        <div class="bg-white/30 backdrop-blur-lg shadow-xl rounded-2xl overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-1">
-                            <!-- Thumbnail -->
-                            {% if product.thumbnail %}
-                                <img src="{{ product.thumbnail }}" alt="thumbnail"
-                                    class="w-full h-48 object-cover">
-                            {% else %}
-                                <div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">
-                                    No Image
-                                </div>
-                            {% endif %}
-
-                            <!-- Konten -->
-                            <div class="p-5">
-                                <!-- Nama Produk -->
-                                <h2 class="text-2xl font-bold mb-2 text-gray-900 truncate">
-                                    {{ product.name }}
-                                </h2>
-
-                                <!-- Kategori -->
-                                <p class="text-sm text-gray-700 mb-3">
-                                    <b>{{ product.get_category_display }}</b>
-                                    {% if product.is_featured %} 
-                                    <span class="ml-1 px-2 py-0.5 bg-yellow-200/60 text-yellow-800 text-xs rounded-full backdrop-blur-sm">⭐ Featured</span>
-                                    {% endif %}
-                                </p>
-                                
-                                <!-- Deskripsi -->
-                                <p class="text-gray-800 text-sm mb-3 line-clamp-2">
-                                    {{ product.description }}
-                                </p>
-                                
-                                <!-- Nama Pembuat -->
-                                <p class="text-sm text-gray-600 mb-5">
-                                    👤 <span class="font-semibold">{{ product.user.username }}</span>
-                                </p>
-
-                                <!-- Tombol Aksi -->
-                                <div class="flex flex-wrap gap-2">
-                                    <a href="{% url 'main:show_product' product.id %}">
-                                        <button class="px-4 py-1 rounded-lg bg-blue-500/70 text-white hover:bg-blue-600/80 backdrop-blur-md">
-                                            Detail
-                                        </button>
-                                    </a>
-                                    {% if product.user == user %}
-                                        <a href="{% url 'main:edit_product' product.id %}">
-                                            <button class="px-4 py-1 rounded-lg bg-yellow-400/70 text-white hover:bg-yellow-500/80 backdrop-blur-md">
-                                                Edit
-                                            </button>
-                                        </a>
-                                        <a href="{% url 'main:delete_product' product.id %}">
-                                            <button class="px-4 py-1 rounded-lg bg-red-500/70 text-white hover:bg-red-600/80 backdrop-blur-md">
-                                                Hapus
-                                            </button>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+    <!-- Header -->
+    <div class="mb-8 text-center">
+    <h1 class="text-4xl font-extrabold text-gray-800 mb-2">
+        🛍️ Koleksi Produk GoalGear
+    </h1>
+    <!-- Tombol buka modal -->
+    <button onclick="showModal()" 
+        class="inline-flex items-center px-4 py-2 bg-white text-blue-600 font-semibold outline outline-2 outline-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition-colors mb-6">
+        ➕ Tambah Produk via AJAX   
+    </button>
+    <p class="text-gray-600">Temukan perlengkapan olahraga terbaik untuk performa maksimal</p>
     </div>
+
+    <!-- Filter -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white/40 backdrop-blur-md rounded-xl shadow-md p-4">
+    <div class="flex space-x-3 mb-4 sm:mb-0">
+        <a id="filter-all" class="bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-700 cursor-pointer">
+        Semua Produk
+        </a>
+        <a id="filter-my" class="bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white cursor-pointer">
+        Produk Saya
+        </a>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="text-sm text-gray-700 italic">⏰ Sesi terakhir login: {{ last_login }}</div>
+    {% endif %}
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+    <svg class="animate-spin h-8 w-8 text-blue-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-gray-600 mt-3">Memuat produk...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error" class="hidden text-center text-red-600 font-medium">Gagal memuat data produk.</div>
+
+    <!-- Grid Produk -->
+    <div id="grid" class="hidden"></div>
+
+    <!-- Empty -->
+    <div id="empty" class="bg-white/40 rounded-lg border border-gray-200 p-12 text-center hidden">
+    <div class="w-32 h-32 mx-auto mb-4">
+        <img src="{% static 'image/no-product.png' %}" alt="No product" class="w-full h-full object-contain">
+    </div>
+    <h3 class="text-lg font-bold text-gray-800 mb-2">Belum ada produk</h3>
+    <p class="text-gray-600 mb-6">Tambahkan produk pertamamu sekarang!</p>
+    <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+        ➕ Tambah Produk
+    </a>
+    </div>
+</div>
+</div>
+
+<!-- SCRIPT AJAX -->
+<script>
+const PRODUCTS_API_ENDPOINT = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM elements
+const loadingSpinner = document.getElementById('loading');
+const errorMessage = document.getElementById('error');
+const emptyState = document.getElementById('empty');
+const gridContainer = document.getElementById('grid');
+const filterAll = document.getElementById('filter-all');
+const filterMy = document.getElementById('filter-my');
+
+let activeFilter = 'all';
+let allProducts = [];
+
+function updateFilterButtons() {
+if (activeFilter === 'all') {
+    filterAll.className = 'bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-700';
+    filterMy.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white';
+} else {
+    filterMy.className = 'bg-blue-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-700';
+    filterAll.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-blue-600 hover:text-white';
+}
+}
+
+function displaySection({loading=false, error=false, empty=false, grid=false}) {
+loadingSpinner.classList.toggle('hidden', !loading);
+errorMessage.classList.toggle('hidden', !error);
+emptyState.classList.toggle('hidden', !empty);
+gridContainer.classList.toggle('hidden', !grid);
+if (grid) gridContainer.className = 'grid sm:grid-cols-2 lg:grid-cols-3 gap-8';
+}
+
+function buildProductCard(product) {
+const div = document.createElement('div');
+div.className = 'bg-white/50 backdrop-blur-md shadow-lg rounded-2xl overflow-hidden hover:shadow-2xl transition flex flex-col';
+div.innerHTML = `
+    <div class="aspect-[16/9] bg-gray-100 overflow-hidden">
+    ${product.thumbnail 
+        ? `<img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full object-cover">`
+        : `<div class="flex items-center justify-center h-full text-gray-400">No Image</div>`}
+    </div>
+    <div class="p-5 flex-1 flex flex-col justify-between">
+    <div>
+        <h2 class="text-xl font-bold text-gray-900 mb-1">${product.name}</h2>
+        <p class="text-sm text-gray-600 mb-2">${product.brand || '-'}</p>
+        <p class="text-sm text-gray-700 mb-3 line-clamp-2">${product.description}</p>
+        <p class="text-gray-900 font-semibold mb-2">Rp ${product.price.toLocaleString()}</p>
+    </div>
+    <div class="flex justify-between items-center mt-3">
+        <a href="/product/${product.id}/" class="text-blue-600 hover:text-blue-700 font-medium">Detail</a>
+        ${Number(product.user_id) === Number(CURRENT_USER_ID)
+        ? `<div class="flex space-x-2">
+            <button onclick='showEditModal(${JSON.stringify(product)})' class="text-yellow-500 hover:text-yellow-600">Edit</button>
+            <button onclick='showDeleteModal("${product.id}")' class="text-red-500 hover:text-red-600">Hapus</button>
+        </div>` : ''}
+    </div>
+    </div>`;
+return div;
+}
+
+function renderProducts(products) {
+gridContainer.innerHTML = '';
+products.forEach(p => gridContainer.appendChild(buildProductCard(p)));
+}
+
+function filterProducts() {
+updateFilterButtons();
+const filtered = activeFilter === 'all' 
+    ? allProducts 
+    : allProducts.filter(p => Number(p.user_id) === Number(CURRENT_USER_ID));
+if (filtered.length === 0) {
+    displaySection({empty: true});
+} else {
+    renderProducts(filtered);
+    displaySection({grid: true});
+}
+}
+
+async function fetchProducts() {
+try {
+    displaySection({loading: true});
+    const res = await fetch(PRODUCTS_API_ENDPOINT, {headers: {'Accept': 'application/json'}});
+    if (!res.ok) throw new Error("Fetch gagal");
+    const data = await res.json();
+    allProducts = data;
+    filterProducts();
+} catch (err) {
+    console.error(err);
+    displaySection({error: true});
+}
+}
+
+filterAll.addEventListener('click', () => {activeFilter='all'; filterProducts();});
+filterMy.addEventListener('click', () => {activeFilter='my'; filterProducts();});
+
+fetchProducts();
+
+document.addEventListener('productAdded', function() {
+    fetchProducts();
+});
+
+</script>
 {% endblock content %}

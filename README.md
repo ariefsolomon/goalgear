@@ -4,6 +4,56 @@
 
 **Link Aplikasi Web**: https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id
 
+# Tugas 6 | AJAX Implementation
+
+## Apa Perbedaan Antara Synchronous Request dan Asynchronous Request?
+- **Synchronous Request**: Permintaan diproses secara berurutan, menghentikan eksekusi hingga selesai. Contohnya, render halaman tradisional di Django yang memuat seluruh halaman sebelum ditampilkan.
+- **Asynchronous Request**: Permintaan diproses tanpa menghentikan eksekusi utama, memungkinkan aktivitas lain berjalan. AJAX adalah contohnya, memuat data di latar belakang tanpa reload.
+
+## Bagaimana AJAX Bekerja di Django (Alur Request–Response)?
+1. **Pengguna Aksi**: Pengguna memicu event, misalnya klik "Tambah Produk".
+2. **Permintaan AJAX**: JavaScript mengirim permintaan HTTP (POST/GET) ke endpoint Django (misalnya, `/add-product-ajax/`) dengan header `X-CSRFToken`.
+3. **Pemrosesan Server**: Django memverifikasi CSRF token dan menjalankan view terkait (misalnya, `add_product_ajax`).
+4. **Respons**: View mengembalikan data JSON (misalnya, `{status: 'success'}`) via `JsonResponse`.
+5. **Pembaruan UI**: JavaScript memproses respons dan memperbarui DOM (misalnya, menampilkan toast atau refresh list).
+
+## Apa Keuntungan Menggunakan AJAX Dibandingkan Render Biasa di Django?
+- **Kecepatan**: Hanya data yang diperlukan dimuat, bukan seluruh halaman.
+- **Pengalaman Pengguna**: Interaksi lebih mulus tanpa reload.
+- **Efisiensi Server**: Mengurangi beban dengan menghindari render template penuh.
+- **Dinamis**: Mendukung pembaruan real-time (misalnya, refresh list produk).
+
+## Bagaimana Cara Memastikan Keamanan Saat Menggunakan AJAX untuk Fitur Login dan Register di Django?
+- **CSRF Protection**: Gunakan token CSRF dalam header `X-CSRFToken`, diambil dari elemen global atau cookie, untuk mencegah serangan CSRF.
+- **Validasi Server-Side**: Verifikasi input (username, password) di view untuk mencegah injeksi atau data tidak valid.
+- **HTTPS**: Pastikan aplikasi menggunakan HTTPS di produksi untuk mengamankan data.
+- **Autentikasi**: Gunakan autentikasi Django bawaan dan hindari `@csrf_exempt` di produksi.
+- **Error Handling**: Tangani respons error untuk mencegah kebocoran informasi sensitif.
+
+## Bagaimana AJAX Mempengaruhi Pengalaman Pengguna (User Experience) pada Website?
+- **Interaktivitas**: Respons instan (misalnya, toast setelah login) tanpa menunggu reload.
+- **Kenyamanan**: Modal dan refresh otomatis mengurangi gangguan navigasi.
+- **Efisiensi**: Pengguna tetap di konteks (misalnya, halaman utama setelah hapus produk).
+- **Kesesuaian Modern**: Memberikan nuansa aplikasi web progresif yang menarik.
+
+## Referensi
+- [MDN – AJAX](https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX)
+- [Django Documentation – AJAX](https://docs.djangoproject.com/en/stable/topics/http/ajax/)
+- [Tailwind CSS – Animation](https://tailwindcss.com/docs/animation)
+
+## Implementasi Tugas 6
+
+### 1. Fungsi CRUD Product dengan AJAX
+- **Create**: Fungsi `add_product_ajax` di `views.py` menangani POST dari modal, mengembalikan JSON respons.
+- **Read**: Fungsi `show_json` mengembalikan list produk dalam format JSON.
+- **Update**: Fungsi `edit_product_ajax` memproses edit produk via AJAX.
+- **Delete**: Fungsi `delete_product_ajax` menghapus produk dan mengembalikan respons JSON.
+- **Routing**: Ditambahkan di `main/urls.py`:
+  ```python
+  path('add-product-ajax/', add_product_ajax, name='add_product_ajax'),
+  path('edit-product-ajax/<uuid:product_id>/', edit_product_ajax, name='edit_product_ajax'),
+  path('delete-product-ajax/<uuid:product_id>/', delete_product_ajax, name='delete_product_ajax'),
+
 # Tugas 5 | Data Edit, Delete & Styling
 
 ## Urutan Prioritas CSS Selector
@@ -490,5 +540,3 @@ Mengatur konfigurasi proyek keseluruhan seperti aplikasi terinstall, database, m
 ## Feedback untuk Asisten Dosen
 
 Tutorial yang diberikan sudah sangat baik, namun bisa dijelaskan lebih lanjut di kelas, karena awalnya saya sedikit bingung dan menghabiskan waktu di pre-tutorial dikarenakan saya menganggap hal tersebut wajib dikerjakan sebelum tutorial.
-
-
