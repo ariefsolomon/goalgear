@@ -3,6 +3,7 @@
 
 {% block content %}
 {% include 'navbar.html' %}
+{% include 'navbar2.html' %}
 
 <div class="bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 w-full pt-24 min-h-screen">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -65,6 +66,10 @@
     <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
         ➕ Tambah Produk
     </a>
+    </div>
+    <div class="sort-buttons">
+        <button>Sort harga termurah</button>
+        <button>Sort harga termahal</button>
     </div>
 </div>
 </div>
@@ -173,9 +178,21 @@ document.addEventListener('productAdded', function() {
 });
 
 function refreshProducts() {
-  showToast('Merefresh produk...', '', 'info');
-  fetchProducts();
+    showToast('Merefresh produk...', '', 'info');
+    fetchProducts();
 }
 
+
+document.getElementById("sort-asc").addEventListener("click", () => {
+    const sorted = [].sort((a, b) => a.price - b.price);
+    renderProducts(sorted)
+})
+
+document.getElementById("sort-asc").addEventListener("click", () => {
+    const sorted = [].sort((a, b) => b.price - a.price);
+    renderProducts(sorted)
+})
+
+fetchProducts()
 </script>
 {% endblock content %}

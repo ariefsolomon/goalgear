@@ -222,7 +222,6 @@
 
   showToast('Produk berhasil ditambahkan!', '', 'success');
 
-  // 🔥 langsung refresh di sini aja (paling aman)
   if (typeof fetchProducts === "function") {
     fetchProducts();
   } else {

@@ -4,6 +4,7 @@ from main.models import Product
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core import serializers
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -12,9 +13,10 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+from django.contrib.auth.decorators import login_required
+import json
+from django.views.decorators.csrf import csrf_exempt
 
-
-# Create your views here.
 @login_required(login_url='/login')
 def show_main(request):
     filter_type = request.GET.get("filter", "all")
@@ -70,7 +72,6 @@ def show_json(request):
         for product in product_list
     ]
     return JsonResponse(data, safe=False)
-
 
 def show_xml_by_id(request, product_id):
     try:
@@ -211,7 +212,6 @@ def login_user_ajax(request):
     else:
         return JsonResponse({"error": "Username atau password salah."}, status=401)
 
-
 @csrf_exempt
 @require_POST
 def register_user_ajax(request):
@@ -227,9 +227,52 @@ def register_user_ajax(request):
     User.objects.create_user(username=username, password=password)
     return JsonResponse({"message": "Registrasi berhasil!"}, status=201)
 
-
 @csrf_exempt
 @require_POST
 def logout_user_ajax(request):
     logout(request)
     return JsonResponse({"message": "Logout berhasil!"}, status=200)
+
+@login_required
+def show_my_items_json(request):
+    product_list = Product.objects.filter(user=request.user)
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'stock': product.stock,
+            'brand': product.brand,
+            'is_featured': product.is_featured,
+            'user_id': product.user.id if product.user else None,
+        }
+        for product in product_list
+    ]
+    return JsonResponse(data, safe=False)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "User not logged in"}, status=401)
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({"status": "error", "message": "Bad JSON"}, status=400)
+    product = Product(
+        name=data.get("name"),
+        price=data.get("price"),
+        description=data.get("description"),
+        thumbnail=data.get("thumbnail"),
+        category=data.get("category"),
+        stock=data.get("stock", 0),
+        brand=data.get("brand", ""),
+        is_featured=data.get("is_featured", False),
+        user=request.user,
+    )
+    product.save()
+    return JsonResponse({"status": "success", "id": str(product.id)}, status=200)

@@ -30,10 +30,8 @@ SECRET_KEY = 'django-insecure-(c#hye_kf$ng9aeg_^(l96yg)5kzrz@za=et#x@9@4j#4%-h@)
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "muhammad-arief41-goalgear.pbp.cs.ui.ac.id"]
-CSRF_TRUSTED_ORIGINS = [
-    "https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id",
-]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "10.0.2.2", "muhammad-arief41-goalgear.pbp.cs.ui.ac.id"]
+CSRF_TRUSTED_ORIGINS = ["https://muhammad-arief41-goalgear.pbp.cs.ui.ac.id", "http://10.0.2.2:8000", "http://127.0.0.1:8000", "http://localhost:*"]
 
 # Application definition
 
@@ -44,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'main',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'goalgear.urls'
@@ -151,3 +152,16 @@ else:
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CORS & cookie settings for Flutter (mobile / emulator)
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
+# Make cookies available for cross-site (useful for emulator / mobile)
+SESSION_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SAMESITE = 'None'
+
+# In dev you may set secure false if you're not using HTTPS locally.
+# But for deployed site with HTTPS, keep these True.
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
